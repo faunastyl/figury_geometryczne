@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/Elementy rozwiązania/">
+    <File Path="Kolo.cs" />
     <File Path="Kwadrat.cs" />
+    <File Path="Prostokat.cs" />
+    <File Path="Trojkat.cs" />
   </Folder>
   <Project Path="figury_geometryczne.csproj" />
 </Solution>
