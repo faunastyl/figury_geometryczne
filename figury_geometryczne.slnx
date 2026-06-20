@@ -1,3 +1,6 @@
 <Solution>
+  <Folder Name="/Elementy rozwiązania/">
+    <File Path="Kwadrat.cs" />
+  </Folder>
   <Project Path="figury_geometryczne.csproj" />
 </Solution>
