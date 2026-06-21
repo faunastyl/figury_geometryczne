@@ -1,40 +1,9 @@
-﻿//aplikacja języku C#, która umożliwia obliczanie
-//pola i obwodu figur płaskich: prostokąt, kwadrat, trójkąt, koło.
-
-using System;
+﻿using System;
 using System.Collections;
+using System.IO;
 
 namespace FiguryGeometryczne
 {
-    class FiguraGeometryczna
-    {
-        // Pola przechowujące wyniki obliczeń
-        public double Pole;
-        public double Obwod;
-
-        // Pobranie danych od użytkownika
-        public virtual void PobierzDane()
-        {
-        }
-
-        // Obliczenie pola
-        public virtual double ObliczPole()
-        {
-            return 0;
-        }
-
-        // Obliczenie obwodu
-        public virtual double ObliczObwod()
-        {
-            return 0;
-        }
-
-        // Wyświetlenie danych figury
-        public virtual void WyswietlDane()
-        {
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
@@ -51,33 +20,52 @@ namespace FiguryGeometryczne
                 Console.WriteLine("3. Dodaj kolo");
                 Console.WriteLine("4. Dodaj trojkat");
                 Console.WriteLine("5. Wyswietl wszystkie figury");
+                Console.WriteLine("6. Zapisz do pliku");
+                Console.WriteLine("7. Odczytaj z pliku");
                 Console.WriteLine("0. Wyjscie");
 
                 Console.Write("Wybierz opcje: ");
                 wybor = Convert.ToInt32(Console.ReadLine());
 
-                FiguraGeometryczna nowaFigura = null;
-
                 switch (wybor)
                 {
                     case 1:
-                        nowaFigura = new Kwadrat();
+                        Kwadrat k = new Kwadrat();
+                        k.PobierzDane();
+                        k.ObliczPole();
+                        k.ObliczObwod();
+                        listaFigur.Add(k);
+                        Console.WriteLine("Dodano kwadrat.");
                         break;
 
                     case 2:
-                        nowaFigura = new Prostokat();
+                        Prostokat p = new Prostokat();
+                        p.PobierzDane();
+                        p.ObliczPole();
+                        p.ObliczObwod();
+                        listaFigur.Add(p);
+                        Console.WriteLine("Dodano prostokat.");
                         break;
 
                     case 3:
-                        nowaFigura = new Kolo();
+                        Kolo ko = new Kolo();
+                        ko.PobierzDane();
+                        ko.ObliczPole();
+                        ko.ObliczObwod();
+                        listaFigur.Add(ko);
+                        Console.WriteLine("Dodano kolo.");
                         break;
 
                     case 4:
-                        nowaFigura = new Trojkat();
+                        Trojkat t = new Trojkat();
+                        t.PobierzDane();
+                        t.ObliczPole();
+                        t.ObliczObwod();
+                        listaFigur.Add(t);
+                        Console.WriteLine("Dodano trojkat.");
                         break;
 
                     case 5:
-
                         if (listaFigur.Count == 0)
                         {
                             Console.WriteLine("Brak figur na liscie.");
@@ -89,7 +77,14 @@ namespace FiguryGeometryczne
                                 figura.WyswietlDane();
                             }
                         }
+                        break;
 
+                    case 6:
+                        ZapiszDoPliku(listaFigur);
+                        break;
+
+                    case 7:
+                        OdczytajZPliku(listaFigur);
                         break;
 
                     case 0:
@@ -101,19 +96,69 @@ namespace FiguryGeometryczne
                         break;
                 }
 
-                if (wybor >= 1 && wybor <= 4)
+            } while (wybor != 0);
+        }
+
+        static void ZapiszDoPliku(ArrayList lista)
+        {
+            using (StreamWriter sw = new StreamWriter("figury.txt"))
+            {
+                foreach (FiguraGeometryczna f in lista)
                 {
-                    nowaFigura.PobierzDane();
+                    sw.WriteLine(f.GetType().Name);
+                    sw.WriteLine(f.Pole);
+                    sw.WriteLine(f.Obwod);
+                }
+            }
 
-                    nowaFigura.ObliczPole();
-                    nowaFigura.ObliczObwod();
+            Console.WriteLine("Zapisano do pliku.");
+        }
 
-                    listaFigur.Add(nowaFigura);
+        static void OdczytajZPliku(ArrayList lista)
+        {
+            if (!File.Exists("figury.txt"))
+            {
+                Console.WriteLine("Brak pliku.");
+                return;
+            }
 
-                    Console.WriteLine("Figura zostala dodana do listy.");
+            lista.Clear();
+
+            string[] linie = File.ReadAllLines("figury.txt");
+
+            for (int i = 0; i < linie.Length; i += 3)
+            {
+                string typ = linie[i];
+                double pole = Convert.ToDouble(linie[i + 1]);
+                double obwod = Convert.ToDouble(linie[i + 2]);
+
+                FiguraGeometryczna f = null;
+
+                switch (typ)
+                {
+                    case "Kwadrat":
+                        f = new Kwadrat();
+                        break;
+                    case "Prostokat":
+                        f = new Prostokat();
+                        break;
+                    case "Kolo":
+                        f = new Kolo();
+                        break;
+                    case "Trojkat":
+                        f = new Trojkat();
+                        break;
                 }
 
-            } while (wybor != 0);
+                if (f != null)
+                {
+                    f.Pole = pole;
+                    f.Obwod = obwod;
+                    lista.Add(f);
+                }
+            }
+
+            Console.WriteLine("Odczytano dane z pliku.");
         }
     }
 }
